@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>English Quiz Settings</title>
+  <link rel="stylesheet" href="popup.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="dark-theme">
+  <div class="container">
+    <header>
+      <div class="logo">📖 English Quiz</div>
+      <div class="toggle-switch">
+        <input type="checkbox" id="themeToggle">
+        <label for="themeToggle" class="toggle-label" title="Toggle Light/Dark Mode">
+          <span class="sun">☀️</span>
+          <span class="moon">🌙</span>
+        </label>
+      </div>
+    </header>
+
+    <div class="stats-card">
+      <div class="stat-item">
+        <div class="stat-value" id="stat-total">0</div>
+        <div class="stat-label">Đã học</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-value" id="stat-percent">0%</div>
+        <div class="stat-label">Tỉ lệ đúng</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-value"><span id="stat-streak">0</span> 🔥</div>
+        <div class="stat-label">Streak cao nhất</div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="setting-row">
+        <div class="setting-info">
+          <label for="enableToggle">Bật Quiz Pop-up</label>
+          <div class="setting-desc">Tự động hiện quiz khi lướt web</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="enableToggle" checked>
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-info">
+          <label for="soundToggle">Âm thanh</label>
+          <div class="setting-desc">Phát âm thanh khi trả lời đúng/sai</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="soundToggle" checked>
+          <span class="slider round"></span>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <label for="intervalSelect">Khoảng thời gian hiện pop-up</label>
+        <select id="intervalSelect">
+          <option value="5">Mỗi 5 phút</option>
+          <option value="10">Mỗi 10 phút</option>
+          <option value="15">Mỗi 15 phút</option>
+          <option value="30" selected>Mỗi 30 phút</option>
+          <option value="60">Mỗi 1 giờ</option>
+          <option value="120">Mỗi 2 giờ</option>
+          <option value="360">Mỗi 6 giờ</option>
+          <option value="720">Mỗi 12 giờ</option>
+        </select>
+      </div>
+
+      <div class="setting-row">
+        <label for="questionsSelect">Số câu hỏi mỗi lần</label>
+        <select id="questionsSelect">
+          <option value="5">5 câu</option>
+          <option value="10" selected>10 câu</option>
+          <option value="20">20 câu</option>
+          <option value="30">30 câu</option>
+          <option value="40">40 câu</option>
+          <option value="50">50 câu</option>
+        </select>
+      </div>
+      
+      <div class="setting-row">
+        <label for="difficultySelect">Cấp độ từ vựng</label>
+        <select id="difficultySelect">
+          <option value="1">Cơ bản</option>
+          <option value="2">Trung bình</option>
+          <option value="3">Nâng cao</option>
+          <option value="all" selected>Tất cả</option>
+        </select>
+      </div>
+
+      <div class="setting-row">
+        <label for="quizModeSelect">Chế độ ôn luyện</label>
+        <select id="quizModeSelect">
+          <option value="word">Từ vựng (Anh -> Việt)</option>
+          <option value="word_reverse">Từ vựng (Việt -> Anh)</option>
+          <option value="sentence">Câu (Anh -> Việt)</option>
+          <option value="sentence_reverse">Câu (Việt -> Anh)</option>
+          <option value="random" selected>Trộn ngẫu nhiên</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <button id="saveBtn" class="btn btn-primary">Lưu cài đặt</button>
+      <button id="triggerBtn" class="btn btn-secondary">Làm Quiz Ngay</button>
+    </div>
+    
+    <div id="saveStatus" class="status-msg"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

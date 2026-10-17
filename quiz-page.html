@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>English Quiz</title>
+  <link rel="stylesheet" href="quiz.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: transparent;
+      height: 100vh;
+      width: 100vw;
+    }
+    
+    /* Make the quiz card fill the entire popup window */
+    body .eq-backdrop {
+      display: none !important;
+    }
+    body .eq-quiz-card {
+      width: 100vw !important;
+      max-width: none !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+    body #eq-overlay-container {
+      background: transparent !important;
+    }
+  </style>
+</head>
+<body>
+  <script src="content.js"></script>
+</body>
+</html>

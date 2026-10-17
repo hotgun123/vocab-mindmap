@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vocabulary Master - 3,000 Từ Vựng Tiếng Anh Theo Chủ Đề (A1 - C1)</title>
+  <meta name="description" content="Nền tảng học 3,000 từ vựng tiếng Anh Oxford & Cambridge theo chủ đề, kèm phiên âm chuẩn IPA, phát âm giọng bản xứ và câu ví dụ thường dùng có dịch nghĩa.">
+  
+  <!-- Modern Typography Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="vocab-app.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- APP HEADER -->
+    <header class="app-header">
+      <div class="header-left">
+        <button class="btn-toggle-sidebar" id="btnToggleSidebar" title="Mở danh mục chủ đề">
+          ☰
+        </button>
+        <a href="#" class="brand-badge" id="brandHomeLink">
+          <div class="brand-logo-icon">📖</div>
+          <div class="brand-text">
+            <h1>VOCABULARY MASTER</h1>
+            <p>3,000+ TỪ VỰNG THEO CHỦ ĐỀ &bull; A1-C1</p>
+          </div>
+        </a>
+      </div>
+
+      <!-- Live Search Bar -->
+      <div class="header-center">
+        <div class="search-box">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+          </svg>
+          <input type="text" id="searchInput" class="search-input" placeholder="Tìm kiếm từ vựng (tiếng Anh hoặc nghĩa tiếng Việt)..." autocomplete="off">
+          <button class="btn-clear-search" id="btnClearSearch" title="Xóa tìm kiếm">✕</button>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Audio Accent & Speed Selector -->
+        <div class="audio-controls" title="Cài đặt phát âm">
+          <select id="voiceSelect" class="select-voice" title="Chọn giọng đọc">
+            <option value="en-US">🇺🇸 US (Mỹ)</option>
+            <option value="en-GB">🇬🇧 UK (Anh)</option>
+          </select>
+          <span style="color:var(--border-subtle);">|</span>
+          <select id="speedSelect" class="select-speed" title="Tốc độ phát âm">
+            <option value="0.8">0.8x</option>
+            <option value="1.0" selected>1.0x</option>
+            <option value="1.2">1.2x</option>
+          </select>
+        </div>
+
+        <!-- View Modes (Browse, Starred, Flashcards, Quiz) -->
+        <div class="view-tabs">
+          <button class="view-tab-btn active" data-view="browse" title="Danh sách từ vựng">
+            📚 Từ vựng
+          </button>
+          <button class="view-tab-btn" data-view="starred" title="Từ vựng đã lưu">
+            ⭐ Đã lưu
+          </button>
+          <button class="view-tab-btn" data-view="flashcards" title="Thẻ ghi nhớ Flashcard">
+            🗂️ Flashcard
+          </button>
+          <button class="view-tab-btn" data-view="quiz" title="Luyện tập trắc nghiệm">
+            🎯 Quiz
+          </button>
+        </div>
+
+        <!-- Sound Effects Toggle -->
+        <button class="icon-btn" id="soundToggleBtn" title="Bật/Tắt âm thanh hiệu ứng">
+          🔊
+        </button>
+
+        <!-- Dark/Light Theme Toggle -->
+        <button class="icon-btn" id="themeToggleBtn" title="Chuyển đổi giao diện Sáng / Tối">
+          🌙
+        </button>
+      </div>
+    </header>
+
+    <!-- MAIN APP WRAPPER -->
+    <div class="main-wrapper">
+      <!-- SIDEBAR: TOPIC CATEGORIES ACCORDION -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <span class="sidebar-title">Danh Mục Chủ Đề</span>
+        </div>
+
+        <button class="all-topics-btn active" id="allTopicsBtn">
+          <span>🌐 Tất cả chủ đề</span>
+          <span class="count-badge">3,145</span>
+        </button>
+
+        <div id="topicAccordionContainer" style="display:flex; flex-direction:column; gap:8px;">
+          <!-- Topic groups loaded dynamically -->
+        </div>
+      </aside>
+
+      <!-- CONTENT AREA -->
+      <main class="content-area">
+        <!-- TOPIC BANNER -->
+        <section class="topic-banner">
+          <div class="banner-content">
+            <div class="banner-eyebrow" id="bannerEyebrow">
+              🌐 TOÀN BỘ KHO TỪ VỰNG
+            </div>
+            <h2 class="banner-title" id="bannerTitle">
+              3,000+ Từ Vựng Theo Chủ Đề (A1 - C1)
+            </h2>
+            <p class="banner-desc" id="bannerDesc">
+              Tuyển tập toàn diện hơn 3,000 từ vựng cốt lõi tiếng Anh Oxford & Cambridge, phân loại theo chủ đề, kèm phiên âm chuẩn IPA, audio và câu ví dụ thông dụng.
+            </p>
+          </div>
+        </section>
+
+        <!-- BROWSE / STARRED VIEW PANEL -->
+        <div class="view-panel active" id="browseViewPanel">
+          <!-- FILTER & TOOLBAR -->
+          <div class="filter-toolbar">
+            <div class="filter-group">
+              <span class="filter-label">Cấp độ:</span>
+              <div class="filter-pills" id="levelFilterPills">
+                <button class="filter-pill active" data-level="all">Tất cả</button>
+                <button class="filter-pill" data-level="A1">A1</button>
+                <button class="filter-pill" data-level="A2">A2</button>
+                <button class="filter-pill" data-level="B1">B1</button>
+                <button class="filter-pill" data-level="B2">B2</button>
+                <button class="filter-pill" data-level="C1">C1</button>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <span class="filter-label">Từ loại:</span>
+              <div class="filter-pills" id="posFilterPills">
+                <button class="filter-pill active" data-pos="all">Tất cả</button>
+                <button class="filter-pill" data-pos="noun">Danh từ</button>
+                <button class="filter-pill" data-pos="verb">Động từ</button>
+                <button class="filter-pill" data-pos="adjective">Tính từ</button>
+                <button class="filter-pill" data-pos="adverb">Trạng từ</button>
+              </div>
+            </div>
+
+            <div class="filter-right">
+              <select id="sortSelect" class="sort-select">
+                <option value="az">Sắp xếp: A &rarr; Z</option>
+                <option value="za">Sắp xếp: Z &rarr; A</option>
+                <option value="level-asc">Cấp độ: A1 &rarr; C1</option>
+                <option value="level-desc">Cấp độ: C1 &rarr; A1</option>
+              </select>
+              <span class="result-count-badge" id="resultCountBadge">0 từ</span>
+            </div>
+          </div>
+
+          <!-- VOCABULARY CARDS GRID -->
+          <div class="vocab-grid" id="vocabGrid">
+            <!-- Word cards rendered here -->
+          </div>
+
+          <!-- EMPTY STATE -->
+          <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">🔍</div>
+            <h3 class="empty-title">Không tìm thấy từ vựng phù hợp</h3>
+            <p class="empty-desc">Hãy thử thay đổi từ khóa tìm kiếm hoặc bỏ bớt các bộ lọc cấp độ / từ loại.</p>
+          </div>
+        </div>
+
+        <!-- FLASHCARDS VIEW PANEL -->
+        <div class="view-panel" id="flashcardsViewPanel">
+          <div class="flashcard-container">
+            <div class="flashcard-progress">
+              <span id="flashcardProgressText">Thẻ 1 / 100</span>
+              <span style="font-size:12px; color:var(--text-muted);">Bấm vào thẻ hoặc phím cách để lật</span>
+            </div>
+
+            <div class="flashcard-scene">
+              <div class="flashcard" id="flashcardElem">
+                <!-- Front Side -->
+                <div class="card-face card-face-front">
+                  <div style="display:flex; gap:8px; margin-bottom:12px;">
+                    <span class="badge-level level-b1" id="flashcardLevel">B1</span>
+                    <span class="badge-pos" id="flashcardPos">noun</span>
+                  </div>
+                  <h2 style="font-size:36px; font-weight:800; color:var(--text-main);" id="flashcardWord">Word</h2>
+                  <p style="font-size:16px; color:var(--primary-light); font-family:var(--font-mono); margin: 8px 0 20px 0;" id="flashcardIpa">/wɜːd/</p>
+                  <button class="btn-ctrl" id="btnFlashcardAudio">🔊 Phát âm</button>
+                  <span class="card-flip-hint">👆 Chạm hoặc nhấn để xem nghĩa & ví dụ</span>
+                </div>
+
+                <!-- Back Side -->
+                <div class="card-face card-face-back">
+                  <div>
+                    <h3 style="font-size:20px; font-weight:700; color:var(--text-main);" id="flashcardMeaning">Nghĩa tiếng Việt</h3>
+                    <p style="font-size:13.5px; color:var(--text-secondary); margin-top:6px;" id="flashcardDef">English definition</p>
+                  </div>
+                  <div style="width:100%; text-align:left; background:var(--bg-surface); padding:14px; border-radius:var(--radius-md); border:1px solid var(--border-subtle);" id="flashcardExamples">
+                    <!-- Examples -->
+                  </div>
+                  <span class="card-flip-hint">👆 Chạm để quay lại mặt trước</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Flashcard Controls -->
+            <div class="flashcard-controls">
+              <button class="btn-ctrl" id="btnPrevFlashcard">◀ Thẻ trước</button>
+              <button class="btn-ctrl btn-primary" id="btnFlipCard">🔄 Lật thẻ</button>
+              <button class="btn-ctrl" id="btnNextFlashcard">Thẻ sau ▶</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUIZ VIEW PANEL -->
+        <div class="view-panel" id="quizViewPanel">
+          <div class="quiz-container">
+            <div class="quiz-card-box">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:13px; font-weight:700; color:var(--primary-light);" id="quizProgressText">Câu hỏi 1 / 10</span>
+                <span style="font-size:13px; font-weight:700; color:var(--success);" id="quizScoreText">Điểm: 0</span>
+              </div>
+
+              <div>
+                <h2 style="font-size:32px; font-weight:800; color:var(--text-main);" id="quizQuestionWord">abandon</h2>
+                <div style="display:flex; align-items:center; gap:8px; margin-top:4px;">
+                  <span style="font-size:14px; color:var(--primary-light); font-family:var(--font-mono);" id="quizQuestionIpa">/əˈbæn.dən/</span>
+                  <span style="font-size:13px; color:var(--text-muted);" id="quizQuestionPos">(verb)</span>
+                </div>
+              </div>
+
+              <div class="quiz-options" id="quizOptionsContainer">
+                <!-- 4 Options Rendered Here -->
+              </div>
+
+              <button class="btn-ctrl btn-primary" style="margin-left:auto; display:none;" id="btnNextQuiz">
+                Câu tiếp theo ▶
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+
+    <!-- WORD DETAIL DRAWER -->
+    <div class="drawer-overlay" id="drawerOverlay">
+      <div class="word-drawer" id="wordDrawer">
+        <!-- Drawer Header -->
+        <div class="drawer-header">
+          <div class="drawer-nav-btns">
+            <button class="btn-drawer-nav" id="btnPrevWord" title="Từ trước">◀ Trước</button>
+            <button class="btn-drawer-nav" id="btnNextWord" title="Từ tiếp theo">Sau ▶</button>
+          </div>
+          <button class="btn-close-drawer" id="btnCloseDrawer" title="Đóng cửa sổ">✕</button>
+        </div>
+
+        <!-- Drawer Body -->
+        <div class="drawer-body">
+          <!-- Word Hero Box -->
+          <div class="drawer-word-hero">
+            <div class="hero-word-row">
+              <h2 class="hero-word" id="drawerWord">abandon</h2>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <button class="btn-card-star" id="btnDrawerStar" style="width:40px; height:40px; font-size:18px;" title="Lưu từ này">☆</button>
+                <button class="btn-hero-audio" id="btnHeroAudio" title="Nghe phát âm từ này">🔊</button>
+              </div>
+            </div>
+
+            <div class="hero-meta">
+              <span class="hero-ipa" id="drawerIpa">/əˈbæn.dən/</span>
+              <span class="badge-level level-b2" id="drawerLevelBadge">B2</span>
+              <span class="badge-pos" id="drawerPosBadge">verb</span>
+              <span class="badge-pos" id="drawerTopicTag" style="font-style:normal; background:var(--bg-surface); padding:2px 8px; border-radius:var(--radius-sm); border:1px solid var(--border-subtle);">📌 Chủ đề</span>
+            </div>
+
+            <div class="hero-meaning-vi" id="drawerMeaningVi">từ bỏ, bỏ rơi</div>
+            <div class="hero-def-en" id="drawerDefEn">to leave a place, thing, or person forever; to stop doing something before finishing</div>
+          </div>
+
+          <!-- Synonyms Section -->
+          <div class="synonyms-section" id="synonymsContainer">
+            <span class="section-label">Từ đồng nghĩa (Synonyms):</span>
+            <div class="synonyms-pills" id="synonymsList">
+              <!-- Synonyms pills -->
+            </div>
+          </div>
+
+          <!-- Practical Example Sentences Section -->
+          <div class="examples-section">
+            <span class="section-label">💬 Câu ví dụ thường sử dụng (2-3 câu / từ):</span>
+            <div id="examplesContainer" style="display:flex; flex-direction:column; gap:10px;">
+              <!-- Example cards rendered dynamically with audio buttons -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUNDLED VOCABULARY DATA (Works locally without CORS error) -->
+  <script src="data/topics_vocab_data.js"></script>
+  <!-- APPLICATION ENGINE -->
+  <script src="vocab-app.js"></script>
+</body>
+</html>

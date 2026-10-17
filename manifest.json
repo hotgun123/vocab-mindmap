@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "English Quiz Pop-up",
+  "version": "1.0.0",
+  "description": "Học tiếng Anh qua quiz pop-up định kỳ với 3000+ từ vựng từ Cambridge Dictionary",
+  "permissions": [
+    "alarms",
+    "storage",
+    "activeTab",
+    "notifications",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["quiz.css"]
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["data/vocabulary.json", "sounds/*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
