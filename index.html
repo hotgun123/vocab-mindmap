@@ -57,9 +57,16 @@
         </div>
 
         <!-- View Modes (Browse, Starred, Flashcards, Quiz) -->
+        <!-- View Modes (Browse, Starred, Flashcards, Quiz) -->
         <div class="view-tabs">
-          <button class="view-tab-btn active" data-view="browse" title="Danh sách từ vựng">
-            📚 Từ vựng
+          <button class="view-tab-btn active" data-view="browse" id="tabBrowseAll" title="Xem tất cả từ vựng và cụm từ">
+            📚 Tất cả
+          </button>
+          <button class="view-tab-btn" data-view="words" id="tabOnlyWords" title="Chế độ chỉ xem Từ đơn">
+            🔤 Từ đơn
+          </button>
+          <button class="view-tab-btn" data-view="phrases" id="tabOnlyPhrases" title="Chế độ chỉ xem Cụm từ, Collocations & Idioms">
+            💬 Cụm từ
           </button>
           <button class="view-tab-btn" data-view="starred" title="Từ vựng đã lưu">
             ⭐ Đã lưu
@@ -94,7 +101,7 @@
 
         <button class="all-topics-btn active" id="allTopicsBtn">
           <span>🌐 Tất cả chủ đề</span>
-          <span class="count-badge">3,145</span>
+          <span class="count-badge" id="allTopicsCount">3,503</span>
         </button>
 
         <div id="topicAccordionContainer" style="display:flex; flex-direction:column; gap:8px;">
@@ -108,13 +115,13 @@
         <section class="topic-banner">
           <div class="banner-content">
             <div class="banner-eyebrow" id="bannerEyebrow">
-              🌐 TOÀN BỘ KHO TỪ VỰNG
+              🌐 TOÀN BỘ KHO TỪ VỰNG & CỤM TỪ
             </div>
             <h2 class="banner-title" id="bannerTitle">
-              3,000+ Từ Vựng Theo Chủ Đề (A1 - C1)
+              3,500+ Từ Vựng & Cụm Từ Theo Chủ Đề (A1 - C1)
             </h2>
             <p class="banner-desc" id="bannerDesc">
-              Tuyển tập toàn diện hơn 3,000 từ vựng cốt lõi tiếng Anh Oxford & Cambridge, phân loại theo chủ đề, kèm phiên âm chuẩn IPA, audio và câu ví dụ thông dụng.
+              Tuyển tập toàn diện hơn 3,500 từ vựng cốt lõi và cụm từ thực tế (collocations, idioms, phrasal verbs) Oxford & Cambridge, phân loại theo chủ đề, kèm phiên âm chuẩn IPA, audio và câu ví dụ thông dụng.
             </p>
           </div>
         </section>
@@ -123,6 +130,22 @@
         <div class="view-panel active" id="browseViewPanel">
           <!-- FILTER & TOOLBAR -->
           <div class="filter-toolbar">
+            <!-- Mode Selector (All vs Single Words vs Phrases) -->
+            <div class="filter-group mode-filter-group">
+              <span class="filter-label">Chế độ học:</span>
+              <div class="mode-segmented-control" id="vocabModePills">
+                <button class="mode-pill active" data-mode="all" title="Xem tất cả từ đơn và cụm từ">
+                  <span class="mode-icon">🌐</span> Tất cả (<span id="modeCountAll">3,503</span>)
+                </button>
+                <button class="mode-pill" data-mode="words" title="Chỉ học từ vựng riêng lẻ">
+                  <span class="mode-icon">🔤</span> Từ đơn (<span id="modeCountWords">3,145</span>)
+                </button>
+                <button class="mode-pill" data-mode="phrases" title="Chế độ học cụm từ, collocations & idioms thực tế">
+                  <span class="mode-icon">💬</span> Cụm từ & Collocations (<span id="modeCountPhrases">358</span>)
+                </button>
+              </div>
+            </div>
+
             <div class="filter-group">
               <span class="filter-label">Cấp độ:</span>
               <div class="filter-pills" id="levelFilterPills">
@@ -136,13 +159,15 @@
             </div>
 
             <div class="filter-group">
-              <span class="filter-label">Từ loại:</span>
+              <span class="filter-label">Phân loại:</span>
               <div class="filter-pills" id="posFilterPills">
                 <button class="filter-pill active" data-pos="all">Tất cả</button>
                 <button class="filter-pill" data-pos="noun">Danh từ</button>
                 <button class="filter-pill" data-pos="verb">Động từ</button>
                 <button class="filter-pill" data-pos="adjective">Tính từ</button>
-                <button class="filter-pill" data-pos="adverb">Trạng từ</button>
+                <button class="filter-pill" data-pos="collocation">Collocation</button>
+                <button class="filter-pill" data-pos="idiom">Thành ngữ</button>
+                <button class="filter-pill" data-pos="phrasal verb">Phrasal verb</button>
               </div>
             </div>
 
@@ -153,7 +178,7 @@
                 <option value="level-asc">Cấp độ: A1 &rarr; C1</option>
                 <option value="level-desc">Cấp độ: C1 &rarr; A1</option>
               </select>
-              <span class="result-count-badge" id="resultCountBadge">0 từ</span>
+              <span class="result-count-badge" id="resultCountBadge">0 mục</span>
             </div>
           </div>
 

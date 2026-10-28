@@ -1,7 +1,25 @@
-# English Quiz - Chrome Extension
+# English Quiz & Vocab Mindmap
 
-Extension hỗ trợ ôn luyện từ vựng tiếng Anh thụ động ngay trong lúc lướt web. Extension hiển thị pop-up ôn tập theo các khoảng thời gian được thiết lập sẵn, với 3 chế độ câu hỏi linh hoạt chống học vẹt và đoán mò.
+Hệ thống học và tra cứu tiếng Anh toàn diện gồm **Chrome Extension** làm quiz ngắt quãng và **Trang Web Mindmap Từ vựng & Cụm từ chuyên đề** (chạy offline hoặc qua GitHub Pages).
 
+🔗 **Trang web học trực tuyến:** [https://hotgun123.github.io/vocab-mindmap/](https://hotgun123.github.io/vocab-mindmap/)
+
+---
+
+## 🌟 Tính năng nổi bật của Vocab Mindmap (`index.html`)
+- **Hơn 3,500 mục học tập chất lượng cao** (độ khó chuẩn CEFR từ C1 trở xuống):
+  - **3,145 từ đơn riêng lẻ** thuộc 12 nhóm chủ đề lớn và 42 chủ đề con.
+  - **358 cụm từ, collocations & thành ngữ thực tế** (bao gồm cụm check-in counter, run behind, take ages, definitely understaffed, get priority boarding, carry cash, hands-on events,...).
+- **Bộ chuyển đổi chế độ (Mode Switcher) linh hoạt:**
+  - 🌐 **Tất cả (3,503):** Xem toàn bộ kho dữ liệu.
+  - 🔤 **Từ đơn (3,145):** Chuyên tâm cày từ vựng độc lập.
+  - 💬 **Cụm từ & Collocations (358):** Chuyên luyện cụm từ thường dùng trong giao tiếp, công việc và du lịch.
+- **Chi tiết từng mục:** Phiên âm quốc tế IPA, định nghĩa tiếng Anh, nghĩa tiếng Việt, và 2-3 câu ví dụ thực tế kèm bản dịch tiếng Việt 100%.
+- **Phát âm chuẩn (Audio TTS):** Bấm nghe phát âm của từng từ/cụm từ cũng như từng câu ví dụ bằng cả giọng Anh - Mỹ (US) và Anh - Anh (UK).
+- **Flashcard & Trắc nghiệm Quiz:** Ôn tập theo từng chủ đề hoặc theo chế độ hiển thị đang chọn.
+- **Chạy hoàn toàn không phụ thuộc backend:** Tương thích cả mở trực tiếp qua file `index.html` (`file:///`) và host trên GitHub Pages.
+
+---
 ## 📥 Cách cài đặt (Cài đặt thủ công)
 1. Tải toàn bộ thư mục `extension English` về máy tính.
 2. Mở trình duyệt Chrome và truy cập vào trang quản lý tiện ích: `chrome://extensions/`

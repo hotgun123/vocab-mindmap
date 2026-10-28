@@ -18,6 +18,7 @@
     searchQuery: '',
     sortOption: 'az',     // 'az', 'za', 'level-asc', 'level-desc'
     currentView: 'browse',// 'browse', 'flashcards', 'quiz', 'starred'
+    vocabMode: localStorage.getItem('vm_vocab_mode') || 'all', // 'all', 'words', 'phrases'
     starredWordIds: new Set(JSON.parse(localStorage.getItem('vm_starred_words') || '[]')),
     
     // Audio & Speech Settings
@@ -220,6 +221,14 @@
     emptyState: document.getElementById('emptyState'),
     levelPills: document.querySelectorAll('.filter-pill[data-level]'),
     posPills: document.querySelectorAll('.filter-pill[data-pos]'),
+    vocabModePills: document.querySelectorAll('.mode-pill[data-mode]'),
+    modeCountAll: document.getElementById('modeCountAll'),
+    modeCountWords: document.getElementById('modeCountWords'),
+    modeCountPhrases: document.getElementById('modeCountPhrases'),
+    allTopicsCount: document.getElementById('allTopicsCount'),
+    tabBrowseAll: document.getElementById('tabBrowseAll'),
+    tabOnlyWords: document.getElementById('tabOnlyWords'),
+    tabOnlyPhrases: document.getElementById('tabOnlyPhrases'),
     viewTabs: document.querySelectorAll('.view-tab-btn'),
     browseViewPanel: document.getElementById('browseViewPanel'),
     flashcardsViewPanel: document.getElementById('flashcardsViewPanel'),
@@ -352,6 +361,8 @@
     applyTheme();
     applySoundSettings();
     populateVoiceSelect();
+    updateModeCounts();
+    applyModePillActive();
     renderTopicSidebar();
     applyFiltersAndRender();
     setupEventListeners();
@@ -381,14 +392,54 @@
     elements.soundToggleBtn.title = state.soundEnabled ? 'Âm thanh: Bật' : 'Âm thanh: Tắt';
   }
 
+  // Mode Switcher Management
+  function setVocabMode(mode) {
+    state.vocabMode = mode;
+    localStorage.setItem('vm_vocab_mode', mode);
+    applyModePillActive();
+    renderTopicSidebar();
+    updateBanner();
+    applyFiltersAndRender();
+  }
+
+  function applyModePillActive() {
+    if (elements.vocabModePills) {
+      elements.vocabModePills.forEach(p => {
+        p.classList.toggle('active', p.getAttribute('data-mode') === state.vocabMode);
+      });
+    }
+
+    if (elements.tabBrowseAll && elements.tabOnlyWords && elements.tabOnlyPhrases) {
+      if (state.currentView === 'browse') {
+        elements.tabBrowseAll.classList.toggle('active', state.vocabMode === 'all');
+        elements.tabOnlyWords.classList.toggle('active', state.vocabMode === 'words');
+        elements.tabOnlyPhrases.classList.toggle('active', state.vocabMode === 'phrases');
+      }
+    }
+  }
+
+  function updateModeCounts() {
+    const totalAll = state.allWords.length;
+    const totalWords = state.allWords.filter(w => !w.is_phrase).length;
+    const totalPhrases = state.allWords.filter(w => w.is_phrase).length;
+
+    if (elements.modeCountAll) elements.modeCountAll.textContent = totalAll.toLocaleString();
+    if (elements.modeCountWords) elements.modeCountWords.textContent = totalWords.toLocaleString();
+    if (elements.modeCountPhrases) elements.modeCountPhrases.textContent = totalPhrases.toLocaleString();
+    if (elements.allTopicsCount) {
+      const activeCount = state.vocabMode === 'words' ? totalWords :
+                          state.vocabMode === 'phrases' ? totalPhrases :
+                          totalAll;
+      elements.allTopicsCount.textContent = activeCount.toLocaleString();
+    }
+  }
+
   // Render Topic Sidebar Accordion
   function renderTopicSidebar() {
     elements.topicAccordionContainer.innerHTML = '';
     
-    // Total words count
-    const totalCount = state.allWords.length;
-    const allCountBadge = elements.allTopicsBtn.querySelector('.count-badge');
-    if (allCountBadge) allCountBadge.textContent = totalCount.toLocaleString();
+    // Total items count for active mode
+    updateModeCounts();
 
     state.topicGroups.forEach(group => {
       const groupItem = document.createElement('div');
@@ -400,13 +451,18 @@
       // Group Header
       const header = document.createElement('div');
       header.className = 'topic-group-header';
+      
+      const groupBadgeCount = state.vocabMode === 'words' ? (group.singleWordsCount !== undefined ? group.singleWordsCount : group.count || 0) :
+                             state.vocabMode === 'phrases' ? (group.phrasesCount !== undefined ? group.phrasesCount : 0) :
+                             (group.wordCount || group.count || 0);
+
       header.innerHTML = `
         <div class="group-title-wrap">
           <span class="group-icon">${group.icon}</span>
           <span class="group-name">${group.name_vi}</span>
         </div>
         <div style="display:flex; align-items:center; gap:8px;">
-          <span class="count-badge">${group.count || 0}</span>
+          <span class="count-badge">${groupBadgeCount}</span>
           <span class="group-arrow">▶</span>
         </div>
       `;
@@ -426,9 +482,14 @@
         if (state.selectedTopic === sub.id) {
           subBtn.classList.add('active');
         }
+        
+        const subBadgeCount = state.vocabMode === 'words' ? (sub.singleWordsCount !== undefined ? sub.singleWordsCount : sub.count || 0) :
+                             state.vocabMode === 'phrases' ? (sub.phrasesCount !== undefined ? sub.phrasesCount : 0) :
+                             (sub.wordCount || sub.count || 0);
+
         subBtn.innerHTML = `
           <span>${sub.icon} ${sub.name_vi}</span>
-          <span class="count-badge">${sub.count || 0}</span>
+          <span class="count-badge">${subBadgeCount}</span>
         `;
 
         subBtn.addEventListener('click', (e) => {
@@ -475,15 +536,25 @@
   function updateBanner() {
     if (state.currentView === 'starred') {
       elements.bannerEyebrow.innerHTML = `⭐ BỘ SƯU TẬP CỦA TÔI`;
-      elements.bannerTitle.innerHTML = `Từ Vựng Đã Đánh Dấu`;
-      elements.bannerDesc.textContent = `Danh sách những từ vựng bạn đã đánh dấu sao để ôn tập và ghi nhớ lâu hơn.`;
+      elements.bannerTitle.innerHTML = `Từ & Cụm Từ Đã Lưu`;
+      elements.bannerDesc.textContent = `Danh sách những từ vựng và cụm từ bạn đã đánh dấu sao để ôn tập và ghi nhớ lâu hơn.`;
       return;
     }
 
     if (state.selectedTopic === 'all') {
-      elements.bannerEyebrow.innerHTML = `🌐 TOÀN BỘ KHO TỪ VỰNG`;
-      elements.bannerTitle.innerHTML = `3,000+ Từ Vựng Theo Chủ Đề (A1 - C1)`;
-      elements.bannerDesc.textContent = `Tuyển tập toàn diện hơn 3,000 từ vựng cốt lõi tiếng Anh Oxford & Cambridge, phân loại theo chủ đề, kèm phiên âm chuẩn IPA, audio và câu ví dụ thông dụng.`;
+      if (state.vocabMode === 'phrases') {
+        elements.bannerEyebrow.innerHTML = `💬 CHẾ ĐỘ CỤM TỪ, COLLOCATIONS & IDIOMS`;
+        elements.bannerTitle.innerHTML = `350+ Cụm Từ & Collocations Theo Chủ Đề (A1 - C1)`;
+        elements.bannerDesc.textContent = `Tuyển tập hơn 350 cụm từ tiếng Anh, collocations tự nhiên và thành ngữ thông dụng nhất trong giao tiếp và công sở, kèm phát âm và câu ví dụ song ngữ.`;
+      } else if (state.vocabMode === 'words') {
+        elements.bannerEyebrow.innerHTML = `🔤 CHẾ ĐỘ TỪ ĐƠN CỐT LÕI`;
+        elements.bannerTitle.innerHTML = `3,100+ Từ Vựng Tiếng Anh Theo Chủ Đề (A1 - C1)`;
+        elements.bannerDesc.textContent = `Tuyển tập hơn 3,100 từ vựng cốt lõi tiếng Anh Oxford & Cambridge, phân loại theo 12 nhóm chủ đề với phiên âm chuẩn IPA và ví dụ thực tế.`;
+      } else {
+        elements.bannerEyebrow.innerHTML = `🌐 TOÀN BỘ KHO TỪ VỰNG & CỤM TỪ`;
+        elements.bannerTitle.innerHTML = `3,500+ Từ Vựng & Cụm Từ Theo Chủ Đề (A1 - C1)`;
+        elements.bannerDesc.textContent = `Tuyển tập toàn diện hơn 3,500 từ vựng cốt lõi và cụm từ thực tế (collocations, idioms, phrasal verbs) Oxford & Cambridge, phân loại theo chủ đề.`;
+      }
       return;
     }
 
@@ -511,6 +582,13 @@
   // Filter and Sort Logic
   function applyFiltersAndRender() {
     let list = state.allWords;
+
+    // Vocab Mode Filter (All vs Single Words vs Phrases)
+    if (state.vocabMode === 'words') {
+      list = list.filter(w => !w.is_phrase);
+    } else if (state.vocabMode === 'phrases') {
+      list = list.filter(w => w.is_phrase);
+    }
 
     // View filter: Starred
     if (state.currentView === 'starred') {
@@ -586,8 +664,26 @@
     words.forEach((item, index) => {
       const card = document.createElement('div');
       card.className = 'vocab-card';
+      if (item.is_phrase) {
+        card.classList.add('is-phrase-card');
+      }
       const isStarred = state.starredWordIds.has(item.id);
       const levelClass = getLevelClass(item.level);
+
+      // Determine phrase badge
+      let phraseBadgeHtml = '';
+      if (item.is_phrase) {
+        const posLower = (item.pos || '').toLowerCase();
+        if (posLower.includes('idiom')) {
+          phraseBadgeHtml = '<span class="badge-type-phrase" style="background:rgba(236,72,153,0.15); color:#f472b6; border-color:rgba(236,72,153,0.35);">✨ Thành ngữ</span>';
+        } else if (posLower.includes('collocation')) {
+          phraseBadgeHtml = '<span class="badge-type-phrase" style="background:rgba(59,130,246,0.15); color:#60a5fa; border-color:rgba(59,130,246,0.35);">🔗 Collocation</span>';
+        } else if (posLower.includes('phrasal')) {
+          phraseBadgeHtml = '<span class="badge-type-phrase" style="background:rgba(245,158,11,0.15); color:#fbbf24; border-color:rgba(245,158,11,0.35);">⚡ Phrasal verb</span>';
+        } else {
+          phraseBadgeHtml = '<span class="badge-type-phrase">💬 Cụm từ</span>';
+        }
+      }
 
       card.innerHTML = `
         <div class="card-top">
@@ -609,6 +705,7 @@
         <div class="card-bottom">
           <div class="badges-wrap">
             <span class="badge-level ${levelClass}">${item.level || 'B1'}</span>
+            ${phraseBadgeHtml}
             <span class="badge-pos">${item.pos || 'noun'}</span>
           </div>
           <div class="examples-badge" title="${(item.examples || []).length} câu ví dụ thường dùng">
@@ -699,7 +796,17 @@
     elements.drawerLevelBadge.textContent = item.level || 'B1';
     
     // Pos & Topic tags
-    elements.drawerPosBadge.textContent = item.pos || 'noun';
+    if (item.is_phrase) {
+      elements.drawerPosBadge.textContent = `💬 ${item.pos || 'cụm từ'}`;
+      elements.drawerPosBadge.style.background = 'rgba(168, 85, 247, 0.15)';
+      elements.drawerPosBadge.style.color = '#c084fc';
+      elements.drawerPosBadge.style.border = '1px solid rgba(168, 85, 247, 0.35)';
+    } else {
+      elements.drawerPosBadge.textContent = item.pos || 'noun';
+      elements.drawerPosBadge.style.background = '';
+      elements.drawerPosBadge.style.color = '';
+      elements.drawerPosBadge.style.border = '';
+    }
     elements.drawerTopicTag.textContent = `${item.topic_icon || '📌'} ${item.topic_vi || 'Tổng quát'}`;
 
     elements.drawerMeaningVi.textContent = item.meaning_vi || '';
@@ -1018,13 +1125,37 @@
       });
     });
 
+    // Mode Segmented Pills (All / Words / Phrases)
+    if (elements.vocabModePills) {
+      elements.vocabModePills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          soundEngine.play('click');
+          const mode = pill.getAttribute('data-mode') || 'all';
+          setVocabMode(mode);
+        });
+      });
+    }
+
     // View Tabs (Browse, Starred, Flashcards, Quiz)
     elements.viewTabs.forEach(tab => {
       tab.addEventListener('click', () => {
         soundEngine.play('click');
-        elements.viewTabs.forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        state.currentView = tab.getAttribute('data-view');
+        const v = tab.getAttribute('data-view');
+        
+        if (v === 'words') {
+          state.currentView = 'browse';
+          setVocabMode('words');
+        } else if (v === 'phrases') {
+          state.currentView = 'browse';
+          setVocabMode('phrases');
+        } else if (v === 'browse') {
+          state.currentView = 'browse';
+          setVocabMode('all');
+        } else {
+          state.currentView = v;
+          elements.viewTabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+        }
 
         // Toggle Panels
         elements.browseViewPanel.classList.toggle('active', state.currentView === 'browse' || state.currentView === 'starred');
